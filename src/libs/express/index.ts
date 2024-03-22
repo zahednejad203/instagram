@@ -1,8 +1,9 @@
 import express from 'express';
 import type { Express } from './type';
 import type { Logger } from 'winston';
+import type { RedisClient } from '../redis/types';
 
-export function initialize(logger: Logger): Express {
+export function initialize(logger: Logger, redisClient: RedisClient): Express {
 	const app = express();
 	const port = process.env.PORT || 3000;
     
@@ -12,5 +13,6 @@ export function initialize(logger: Logger): Express {
 
 	(app as Express).logger = logger;
 	(app as Express).core = express;
+	(app as Express).redisClient = redisClient;
 	return app as Express;
 }

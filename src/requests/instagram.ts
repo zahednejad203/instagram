@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function send(username: string) {
+export async function getInstagramInformation(username: string) {
 	return await axios.get(
 		'https://i.instagram.com/api/v1/users/web_profile_info',
 		{
