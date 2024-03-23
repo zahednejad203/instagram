@@ -6,8 +6,38 @@ Welcome! This assigment is designed for you to demonstrate mastery of software d
 ## Assignment
 
 ### Setup
+#### Using Docker
+- Make sure you have docker desktop installed. You can follow the instruction [here](https://docs.docker.com/desktop/) to install Docker Desktop.
+- use command: `docker-compose up`
+#### Without Docker
+- make sure you have redis installed on your machine. You can follow the instruction [here](https://redis.io/docs/install/) to install and run Redis server on your machine.
 - Install dependencies: `npm install`
 - Run the app in development mode: `npm run dev`
+- Run the app in production mode: `npm run build && npm run start`
+
+#### Environment variables
+- For development environment variables you can add or edit the variables in the .env file.
+- For production environment variables you can add or edit the variables in the .production.env file.
+
+### API
+- '/user_profile' : It will return the instagram account information for the provided username
+  - parameters: 
+    - `username` : user's instagram account's handle
+    - `force_update` : when it is true it will ignore the redis cache and returns the latest information
+  - returns:
+    - `biography`: string (optional) // the account holder's biography
+    - `followers_count`: number (optional) // number of followers
+    - `recent_posts`: // last three recent posts
+        - `comments`: number (optional) // number of comments
+        - `likes`: number (optional) // number of likes
+        - `type`: enum[image, video] (optional) // type of the post
+        - `url`: string (optional)// url to the post's media
+    - `name`: string, (optional) // the account's handle
+    - `timestamp`: number (optional)// the timestamp for when the data was retrieved
+  - examples:
+    - http://localhost/user_profile/?username=mavrckco&force_update=true // without using cache
+    - http://localhost/user_profile/?username=mavrckco // using cache
+
 
 ### Requirements
 Other than these requirements, you may use any packages and tools you prefer.
