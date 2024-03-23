@@ -21,12 +21,15 @@ export default function start(server: Express): void {
 		}
 
 		try {
-			const redisResponse = await server.redisClient.safeGet<AccountInformation>(paramsParse.data.username);
-			if(redisResponse.success && paramsParse.data.force_update !== 'true') {
-				return res.send({success: true, data: redisResponse.data});
+			// getting the data from redis cache
+			if (paramsParse.data.force_update !== 'true') {
+				const redisResponse = await server.redisClient.safeGet<AccountInformation>(paramsParse.data.username);
+				if(redisResponse.success) {
+					return res.send({success: true, data: redisResponse.data});
+				}
 			}
 
-			// throws an error in case of failure
+			// getting the data from instagram public api. it throws an error in case of failure
 			const response = await getInstagramInformation(paramsParse.data.username);
 			
 			const parsedData = AccountInformationProcessed.safeParse(response.data);
@@ -36,6 +39,7 @@ export default function start(server: Express): void {
 
 			// if the key doesn't exist or the user forced an update update the redis cache and set the expiration to 24hrs
 			server.redisClient.set(paramsParse.data.username, JSON.stringify(parsedData.data), 'EX', 24*60*60);
+			
 			return res.send({success: true, data: parsedData.data});
 		}catch(err) {
 			server.logger.error(err);
