@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7.2.4-alpine
+    ports:
+      - '6379:6379'
+    volumes: 
+      - redis:/data
+  node:
+    container_name: instagram
+    build: .
+    command: npm run dev
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    ports:
+      - 80:80
+    volumes:
+      - ./:/home/node/app
+volumes:
+  redis:
+    driver: local
